@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Launch Radar — pre-token protocols ranked by implied value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip" href="#board">Skip to the board</a>
+<header class="top">
+  <div class="brand">
+    <div class="pulse" aria-hidden="true"></div>
+    <div>
+      <h1>Token Launch Radar</h1>
+      <p class="tag">Pre-token protocols, ranked by what their token would be worth if it launched today.</p>
+    </div>
+  </div>
+  <p class="meta" id="meta">Loading the snapshot…</p>
+</header>
+
+<main>
+  <section class="stats" id="stats" aria-label="Board summary"></section>
+
+  <section class="controls" aria-label="Filter and sort">
+    <div class="tabs" role="tablist" aria-label="Views">
+      <button id="tab-board" role="tab" aria-selected="true">Board</button>
+      <button id="tab-live" role="tab" aria-selected="false">Already trading</button>
+    </div>
+    <label class="field search">Search
+      <input id="q" type="search" placeholder="Name or slug…" autocomplete="off">
+    </label>
+    <label class="field">Category
+      <select id="cat"><option value="">All categories</option></select>
+    </label>
+    <label class="field">Chain
+      <select id="chain"><option value="">All chains</option></select>
+    </label>
+    <label class="field">Sort by
+      <select id="sort">
+        <option value="implied">Implied value</option>
+        <option value="tvl">TVL</option>
+        <option value="growth">7-day change</option>
+        <option value="age">Age</option>
+        <option value="name">Name A–Z</option>
+      </select>
+    </label>
+    <label class="check"><input id="watchlist" type="checkbox"> Watchlist only</label>
+  </section>
+
+  <p class="count" id="count" aria-live="polite"></p>
+
+  <section id="detail" class="detail" hidden aria-label="Protocol detail"></section>
+
+  <section id="board" class="board" tabindex="-1" aria-label="Ranked board">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="implied">#</th>
+          <th data-sort="name">Protocol</th>
+          <th>Category</th>
+          <th>Chains</th>
+          <th data-sort="tvl">TVL</th>
+          <th data-sort="growth">7d</th>
+          <th data-sort="age">Age</th>
+          <th data-sort="implied">Implied value</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="empty" id="empty" hidden>No protocol matches this filter.</p>
+  </section>
+
+  <section id="live" class="board" hidden tabindex="-1" aria-label="Already trading">
+    <p class="note">These protocols already have a token that trades. The market sets their value, so they are
+    never ranked on this board — they are here so the reader can tell the two groups apart, and so the
+    board's category multiples can be checked against the market's own numbers.</p>
+    <table>
+      <thead>
+        <tr><th>Protocol</th><th>Category</th><th>Chains</th><th>TVL</th><th>Market cap</th><th>Mcap / TVL</th><th>7d</th></tr>
+      </thead>
+      <tbody id="live-rows"></tbody>
+    </table>
+  </section>
+
+  <section class="method" aria-label="How the radar works">
+    <h2>How the radar works</h2>
+    <p><strong>Implied value = TVL × category multiple × growth × maturity × breadth.</strong>
+    The category multiple is the median market-cap/TVL ratio of the live-token protocols of the same
+    category inside this snapshot (at least 3 comparables, otherwise the snapshot-wide median), clamped
+    to 0.02–1.50. Growth is the 7-day TVL change clamped to −50…+100%, weighted 0.40. Maturity runs from
+    0.70 for a protocol tracked less than a day to 1.00 after four years with no token; a protocol with
+    no tracking date scores 0.85. Breadth adds 0.04 per extra chain, up to 5. No protocol name is ever
+    special-cased: the same formula scores every row.</p>
+    <p><strong>What “pre-token” means.</strong> A protocol is on this board when its DefiLlama record
+    carries no token — no market cap, no CoinGecko id, no symbol. That is what the record says, never
+    proof it has no token: a protocol on the list may still have a token its record does not carry.
+    The watchlist is the house's floor (TVL at or above $50,000,000, no token, not a wrapped, staked or
+    bridged product); the board also ranks every other rankable pre-token protocol below that floor,
+    because the radar exists to find the early ones.</p>
+    <p><strong>Farm plans.</strong> Each row carries six steps with what they cost and how long they take,
+    derived from the protocol's own category, chains, TVL and age. Nothing here predicts whether or when
+    a token is issued — the board prices the launch if the record stayed as it is.</p>
+    <h3>Category multiples used</h3>
+    <div class="mults" id="mults"></div>
+  </section>
+
+  <footer>
+    <p id="foot"></p>
+  </footer>
+</main>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
